@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".Dashboard">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="25dp"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:gravity="center_vertical"
+                android:paddingVertical="25dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/oxford_blue"
+                    android:text="@string/menu"
+                    android:layout_alignParentStart="true"
+                    android:textSize="22sp"
+                    tools:ignore="RelativeOverlap" />
+                <ImageView
+                    android:id="@+id/btn_close_fragment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleY="1.2"
+                    android:scaleX="1.2"
+                    android:src="@drawable/ic_baseline_close_24"
+                    android:layout_alignParentEnd="true"
+                    android:contentDescription="@string/todo" />
+            </RelativeLayout>
+            <TextView
+                android:id="@+id/show_pin"
+                android:onClick="clickFunc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/show_pin"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:background="@drawable/border_bottom2" />
+            <TextView
+                android:id="@+id/change_pin"
+                android:onClick="clickFunc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/change_pin"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:background="@drawable/border_bottom2" />
+            <TextView
+                android:id="@+id/change_password"
+                android:onClick="clickFunc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/change_password"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:background="@drawable/border_bottom2" />
+            <TextView
+                android:id="@+id/logout"
+                android:onClick="clickFunc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/logout"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:paddingTop="25dp"
+                android:paddingBottom="25dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

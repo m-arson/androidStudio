@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MoonDoor</string>
+    <string name="log_activity">Log Activity</string>
+    <string name="menu">Menu</string>
+    <string name="todo">TODO</string>
+    <string name="show_pin">Show Pin</string>
+    <string name="change_pin">Change Pin</string>
+    <string name="change_password">Change Password</string>
+    <string name="logout">Logout</string>
+    <!-- TODO: Remove or change this placeholder text -->
+</resources>

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Dashboard">
+    <View
+        android:id="@+id/caption2"
+        android:layout_width="match_parent"
+        android:layout_height="540px"
+        android:background="@drawable/bg_main"
+        android:elevation="2dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+    <RelativeLayout
+        android:id="@+id/relat"
+        android:translationZ="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="540px"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingHorizontal="25dp">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical"
+            android:layout_alignParentLeft="true"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome,"
+                android:textSize="16dp"
+                android:textAlignment="textStart"
+                android:textColor="@color/white" />
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="26dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/btn_menu"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:layout_height="fill_parent"
+            android:scaleX="2"
+            android:scaleY="2"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_baseline_menu_24" />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="25dp"
+        android:paddingVertical="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/relat">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Door State :" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:layout_marginVertical="20dp"
+            android:paddingLeft="25dp"
+            android:text="Open" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="Last Access :" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="18dp"
+            android:layout_marginVertical="20dp"
+            android:paddingLeft="25dp"
+            android:text="Aug 13, 2021 18:00:03" />
+
+        <RelativeLayout
+            android:id="@+id/btn_control"
+            android:layout_width="600px"
+            android:layout_height="600px"
+            android:background="@drawable/rounded_btn"
+            android:layout_marginTop="35dp"
+            android:gravity="center"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:layout_width="250px"
+                android:layout_height="250px"
+                android:src="@drawable/ic_baseline_vpn_key_24" />
+        </RelativeLayout>
+    </LinearLayout>
+    <Button
+        android:id="@+id/act_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Log Activity"
+        app:layout_constraintTop_toBottomOf="@id/btn_control"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginHorizontal="25dp"
+        android:height="60dp"
+        android:layout_marginBottom="20dp"
+        tools:ignore="NotSibling" />
+</androidx.constraintlayout.widget.ConstraintLayout>
