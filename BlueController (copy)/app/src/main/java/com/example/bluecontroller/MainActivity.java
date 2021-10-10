@@ -1,5 +1,6 @@
 package com.example.bluecontroller;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -30,12 +31,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+    protected ArrayList<BluetoothDevice> devices = new ArrayList<>();
+    private ProgressDialog dialog;
     private BluetoothAdapter bluetoothAdapter;
     private int counter = 0;
     private boolean func1_val = false,
             func2_val = false,
             func3_val = false;
     private ImageView arrow;
+    private AlertDialog pairedDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +50,12 @@ public class MainActivity extends AppCompatActivity {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if(!bluetoothAdapter.isEnabled()) {
-            askBluetoothPermission();
+            //Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            //askBluePermission.launch(intent);
+           askBluetoothPermission();
         }
+
+        dialog = new ProgressDialog(this);
         arrow = findViewById(R.id.arrow);
         arrow.setVisibility(View.INVISIBLE);
 
@@ -84,7 +93,11 @@ public class MainActivity extends AppCompatActivity {
         funcButton(findViewById(R.id.func3));
 
         ImageView btn = findViewById(R.id.config);
-
+        btn.setOnClickListener(view -> {
+            Intent innt = new Intent(MainActivity.this, DevicesMenu.class);
+            startActivity(innt);
+        });
+        /*
         btn.setOnClickListener(view->{
             AlertDialog.Builder dlg = new AlertDialog.Builder(this);
             View dview = getLayoutInflater().inflate(R.layout.menu, null);
@@ -104,10 +117,21 @@ public class MainActivity extends AppCompatActivity {
                             | View.SYSTEM_UI_FLAG_FULLSCREEN);
             menu.show();
             menu.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-        });
+        }); */
 
+        IntentFilter recv = new IntentFilter();
+        recv.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        recv.addAction(BluetoothDevice.ACTION_FOUND);
+        recv.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        recv.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(registerRecv, recv);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(registerRecv);
+    }
     @SuppressLint({"ClickableViewAccessibility", "NonConstantResourceId"})
     private void touched(ImageView iv) {
         iv.setOnTouchListener((view, motionEvent) -> {
@@ -228,7 +252,39 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
-private void askBluetoothPermission() {
+
+    private final BroadcastReceiver registerRecv = new BroadcastReceiver() {
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            switch (action) {
+                case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
+                    devices.clear();
+                    dialog.show();
+                    dialog.setContentView(R.layout.progress_bar);
+                    dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                    break;
+                case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
+                    dialog.dismiss();
+                    devices.forEach((dev) -> System.out.println("Name : " + dev.getName() + ", Addr : " + dev.getAddress()));
+                    break;
+                case BluetoothDevice.ACTION_FOUND:
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    devices.add(device);
+                    break;
+            }
+        }
+    };
+//    private final ActivityResultLauncher<Intent> askBluePermission = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            result -> {
+//                if(result.getResultCode() != -1) {
+//                    setText("Bluetooth needed to be enabled!");
+//                }
+//            }
+//    );
+    private void askBluetoothPermission() {
          AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setMessage("Please enable bluetooth to use application.");
             builder.setTitle("Bluetooth");
@@ -307,11 +363,26 @@ private void askBluetoothPermission() {
         switch (v.getId()) {
             case R.id.menu1:
                 if(!bluetoothAdapter.isEnabled()) {
+                    //Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    //askBluePermission.launch(intent);
                     askBluetoothPermission();
                 }
                 else {
-                    Intent menuIntent = new Intent(MainActivity.this, DevicesMenu.class);
-                    startActivity(menuIntent);
+                    //Intent intent2 = new Intent(getApplicationContext(), PairedDevicesMenu.class);
+                   // startActivity(intent2);
+//                    PairedDevicesMenu pairedDevicesMenu = new PairedDevicesMenu();
+//                    pairedDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+//                            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+//                    pairedDialog.getWindow().getDecorView()
+//                            .setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE
+//                                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+//                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+//                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+//                                    | View.SYSTEM_UI_FLAG_FULLSCREEN);
+//                    pairedDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
                 }
                 break;
             case R.id.menu2:
@@ -320,6 +391,30 @@ private void askBluetoothPermission() {
             case R.id.menu3:
                 setText("Menu 3");
                 break;
+            case R.id.btnClosePaired:
+                pairedDialog.dismiss();
+                break;
+            case R.id.scanblth:
+                cstm_cav();
+                if(bluetoothAdapter.isDiscovering())
+                    bluetoothAdapter.cancelDiscovery();
+                bluetoothAdapter.startDiscovery();
+                break;
+        }
+    }
+    private void cstm_cav() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int pc;
+            pc = this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    + this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION);
+            if (pc != 0) {
+                this.requestPermissions(new String[] {
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        },
+                        9871
+                );
+            }
         }
     }
 }

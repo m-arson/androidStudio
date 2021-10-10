@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:padding="25dp"
+    android:background="@color/bblue"
+    android:layout_height="match_parent"
+    tools:context=".DevicesMenu">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:paddingEnd="20dp"
+        android:layout_weight="1">
+        <LinearLayout
+            android:nestedScrollingEnabled="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Paired Devices:"
+                android:textSize="18sp"
+                android:height="50dp"
+                android:gravity="center_vertical"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+            <ListView
+                android:id="@+id/pairedList"
+                android:divider="@color/graywhite"
+                android:dividerHeight="1dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:layout_weight="1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/scanblth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="0dp"
+                android:textStyle="normal"
+                android:textSize="16sp"
+                android:height="50dp"
+                android:text="Scan New Device"
+                android:textAllCaps="false" />
+            <ListView
+                android:id="@+id/scanList"
+                android:divider="@color/graywhite"
+                android:dividerHeight="1dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/btnClosePaired"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:paddingVertical="10dp"
+        android:paddingHorizontal="25dp"
+        app:tint="@color/white"
+        android:src="@drawable/ic_baseline_close_24" />
+</LinearLayout>
