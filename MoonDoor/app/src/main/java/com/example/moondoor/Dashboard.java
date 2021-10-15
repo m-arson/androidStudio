@@ -1,9 +1,15 @@
 package com.example.moondoor;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -15,7 +21,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+
+import java.util.Objects;
 
 public class Dashboard extends AppCompatActivity {
     @Override
@@ -38,9 +48,19 @@ public class Dashboard extends AppCompatActivity {
                 close_door.start();
             }, 3000);
         });
+
         btn_menu.setOnClickListener(view-> {
-            Menu menu = new Menu();
-            menu.show(getSupportFragmentManager(), menu.getTag());
+//            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, App.CHANNEL_ID)
+//                    .setSmallIcon(R.drawable.ic_home)
+//                    .setContentTitle("WARNING, door opens without verification")
+//                    .setContentText("Please check your home condition.")
+//                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+//                    .setCategory(NotificationCompat.CATEGORY_ALARM);
+//            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+//            notificationManager.notify(1, builder.build());
+//            Menu menu = new Menu();
+//            menu.show(getSupportFragmentManager(), menu.getTag());
+            startService(new Intent(getApplication(), MDRNotificationService.class));
         });
 
         act_log.setOnClickListener(view-> {
