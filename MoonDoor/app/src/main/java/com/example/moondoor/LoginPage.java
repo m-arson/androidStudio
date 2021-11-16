@@ -103,7 +103,7 @@ public class LoginPage extends AppCompatActivity {
                     mToast("Field cannot be empty. Try Again!");
                 } else {
                     String token = "736b72697073692d7331";
-                    String url = "http://192.168.1.12/test/handle_post.php";
+                    String url = "http://34.134.1.73/handle_post.php";
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                             response -> {
                                 try {
