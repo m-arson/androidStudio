@@ -28,6 +28,11 @@ import androidx.core.content.ContextCompat;
 import java.util.Objects;
 
 public class Dashboard extends AppCompatActivity {
+    
+    private final static String HOSTNAME = "tcp://34.134.1.73:1883";
+    private final static String USERNAME = "arson";
+    private final static String PASSWORD = "s4m0NoOO_K!t3dz";
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +45,81 @@ public class Dashboard extends AppCompatActivity {
         user_name.setText(sharedPreferences.getString("fullname",""));
         MediaPlayer open_door = MediaPlayer.create(this, R.raw.open_door);
         MediaPlayer close_door = MediaPlayer.create(this, R.raw.closing_door);
+        TextView acc = findViewById(R.id.acc);
+        TextView log = findViewById(R.id.log);
+        
+        String clientId = MqttClient.generateClientId();
+
+        client = new MqttAndroidClient(this.getApplicationContext(),
+                HOSTNAME,
+                clientId);
+
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setUserName(USERNAME);
+        options.setPassword(PASSWORD.toCharArray());
+
+        try {
+            IMqttToken token = client.connect(options);
+            IMqttToken token = client.connect();
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
+                    sub();
+                }
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+        client.setCallback(new MqttCallback() {
+            @Override
+            public void connectionLost(Throwable cause) {
+                new Timer().scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        try {
+                            client.connect();
+                        } catch (MqttException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },0,2000);
+            }
+            @Override
+            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                String text0 = new String(message.getPayload());
+                if(text0.matches("alert")) {
+                    textView.setText(new String(message.getPayload()));
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), App.CHANNEL_ID)
+                        .setSmallIcon(R.drawable.ic_launcher_background)
+                        .setContentTitle("WARNING, door opens without verification")
+                        .setContentText("Please check your home condition.")
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setCategory(NotificationCompat.CATEGORY_ALARM);
+                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
+                    notificationManager.notify(1, builder.build());
+                } else {
+                    String[] arr_data = text0.split("/");
+                    if(arr_data[0].matches("RDA0MTE3MTMyNi9BcnNvbiBNYXJpYW51cw")) {
+                        acc.setText(arr_data[2]);
+                        log.setText(arr_data[3]);
+                    }
+                }
+            }
+
+            @Override
+            public void deliveryComplete(IMqttDeliveryToken token) {
+
+            }
+        });
+        
+        
         key_btn.setOnClickListener(view -> {
+            pub();
             key_btn.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.rounded_btn_clicked));
             open_door.start();
             new Handler().postDelayed(() -> {
@@ -49,24 +128,33 @@ public class Dashboard extends AppCompatActivity {
             }, 3000);
         });
 
-        btn_menu.setOnClickListener(view-> {
-//            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, App.CHANNEL_ID)
-//                    .setSmallIcon(R.drawable.ic_home)
-//                    .setContentTitle("WARNING, door opens without verification")
-//                    .setContentText("Please check your home condition.")
-//                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-//                    .setCategory(NotificationCompat.CATEGORY_ALARM);
-//            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-//            notificationManager.notify(1, builder.build());
-//            Menu menu = new Menu();
-//            menu.show(getSupportFragmentManager(), menu.getTag());
-            startService(new Intent(getApplication(), MDRNotificationService.class));
-        });
-
         act_log.setOnClickListener(view-> {
             SweepUp sweepUp = new SweepUp();
             sweepUp.show(getSupportFragmentManager(), sweepUp.getTag());
         });
+    }
+    public void pub() {
+        String topic = "Skripsi/D041171326/Status";
+        String payload = "RDA0MTE3MTMyNi9BcnNvbiBNYXJpYW51cw/opendoor=on";
+        byte[] encodedPayload;
+        try {
+            encodedPayload = payload.getBytes(StandardCharsets.UTF_8);
+            MqttMessage message = new MqttMessage(encodedPayload);
+            client.publish(topic, message);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+    public void sub() {
+        String topic = "Skripsi/D041171326/Alert";
+        String topic1 = "Skripsi/D041171326/Status";
+        int qos = 0;
+        try {
+            client.subscribe(topic, qos);
+            client.subscribe(topic1, qos);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
